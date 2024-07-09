@@ -68,9 +68,10 @@ function colored(card, color) {
 /**
  * @param {{ value: number, suit: number }} deck 
  * @param {number[]} selected 
+ * @param {number[]} heat 
  * @returns {string} 
  */
-export function renderHand(deck, selected) {
+export function renderHand(deck, selected, heat) {
   const cards = deck.map((c, i) => {
     const isSelected = selected.includes(i)
     if (isSelected) {
@@ -80,7 +81,7 @@ export function renderHand(deck, selected) {
         emptyLine,
       ]
     } else {
-      if (selected.length > 0) {
+      if (heat.includes(i)) {
         return [
           emptyLine,
           emptyLine,

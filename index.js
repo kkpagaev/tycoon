@@ -3,7 +3,7 @@ import { renderHand, renderPicker } from "./render.js";
 
 keypress(process.stdin);
  
-const selected = [1,3];
+const selected = [];
 
 function createDeck() {
   return Array.from({length: 14}).map((_, i) => {
@@ -35,12 +35,22 @@ let deck = createDeck();
 // ]
 
 let current = 0;
+let heat = [];
+
+function calculateHeat(selected, deck) {
+  const selectedCards = selected.map((c) => deck[c].value);
+  return deck.reduce((acc, c, i) => {
+    if (!selectedCards.includes(c.value)) {
+      return [...acc, i];
+    }
+    return acc
+  }, [])
+}
 
 function render() {
   
+  const hand = renderHand(deck, selected, heat);
   console.clear();
-  const hand = renderHand(deck, selected);
-  // console.log(hand)
   console.log(
     // renderPicker(current, "_") + "\n" +
     hand + "\n" + renderPicker(current));
@@ -67,6 +77,7 @@ process.stdin.on('keypress', function (ch, key) {
       } else {
         selected.push(current);
       }
+      heat = calculateHeat(selected, deck);
     }
     if (key.name == "left"|| key.name === "h") {
       current = (current - 1 + deck.length) % deck.length;
