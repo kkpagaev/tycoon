@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 const suits = ["♠", "♥", "♦", "♣"];
 
 const faces = [
@@ -19,41 +21,50 @@ const faces = [
 function renderCard(value, suit) {
   if (value === 14) {
     return [
-      "╭───────╮",
-      "│ J     │",
-      "│ o     │",
-      "│ k     │",
-      "│ e     │",
-      "│ r     │",
-      "╰───────╯"
+      ["╭","─","─","─","─","─","─","─","╮"],
+      ["│"," ","J"," "," "," "," "," ","│"],
+      ["│"," ","o"," "," "," "," "," ","│"],
+      ["│"," ","k"," "," "," "," "," ","│"],
+      ["│"," ","e"," "," "," "," "," ","│"],
+      ["│"," ","r"," "," "," "," "," ","│"],
+      ["╰","─","─","─","─","─","─","─","╯"],
     ];
   }
   if (value === 10) {
     return [
-      "╭───────╮",
-      `│10     │`,
-      "│       │",
-      `│   ${suits[suit]}   │`,
-      "│       │",
-      `│     10│`,
-      "╰───────╯"
+      ["╭","─","─","─","─","─","─","─","╮"],
+      ["│","1","0"," "," "," "," "," ","│"],
+      ["│"," "," "," "," "," "," "," ","│"],
+      ["│"," "," "," ",suits[suit]," "," "," ","│"],
+      ["│"," "," "," "," "," "," "," ","│"],
+      ["│"," "," "," "," "," ","1","0","│"],
+      ["╰","─","─","─","─","─","─","─","╯"],
     ];
 
   }
 
   const face = faces[value - 1];
   return [
-    "╭───────╮",
-    `│${face}      │`,
-    "│       │",
-    `│   ${suits[suit]}   │`,
-    "│       │",
-    `│      ${face}│`,
-    "╰───────╯"
+    ["╭","─","─","─","─","─","─","─","╮"],
+    ["│",face," "," "," "," "," "," ","│"],
+    ["│"," "," "," "," "," "," "," ","│"],
+    ["│"," "," "," ",suits[suit]," "," "," ","│"],
+    ["│"," "," "," "," "," "," "," ","│"],
+    ["│"," "," "," "," "," "," ",face,"│"],
+    ["╰","─","─","─","─","─","─","─","╯"],
   ];
 }
 
 
+function pixelMatrixJoin(arr) {
+  console.log(arr[0].length)
+  console.log(arr.map((r)=> r.join("")).join("\n"))
+}
+const emptyLine = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+
+function colored(card, color) {
+  return card.map((row) => row.map((c) => color(c)))
+}
 /**
  * @param {{ value: number, suit: number }} deck 
  * @param {number[]} selected 
@@ -65,13 +76,20 @@ export function renderHand(deck, selected) {
     if (isSelected) {
       return [
         ...renderCard(c.value, c.suit),
-        "         ",
-        "         ",
+        emptyLine,
+        emptyLine,
       ]
     } else {
+      if (selected.length > 0) {
+        return [
+          emptyLine,
+          emptyLine,
+          ...(colored(renderCard(c.value, c.suit), chalk.gray)),
+        ]
+      }
       return [
-        "         ",
-        "         ",
+        emptyLine,
+        emptyLine,
         ...renderCard(c.value, c.suit),
       ]
     }
@@ -84,15 +102,17 @@ export function renderHand(deck, selected) {
     );
   }
 
-  return rows.map((row) => {
+  const r = rows.map((row) => {
     return row.reduce((acc, value) => {
-      if (value[0] === " ") {
-        return acc + value.slice(3);
+      if (value[0][0] === " ") {
+        return acc.concat(value.slice(3));
       } else {
-        return acc.slice(0, -3) + value;
+        return acc.slice(0, -3).concat(value);
       }
     })
-  }).join("\n");
+  });
+
+  return r.map((r)=> r.join("")).join("\n");
 }
 
 export function renderPicker(pos, ch) {

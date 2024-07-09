@@ -5,12 +5,15 @@ keypress(process.stdin);
  
 const selected = [1,3];
 
-const deck = Array.from({length: 14}).map((_, i) => {
-  return {
-    value: i + 1,
-    suit: Math.floor(Math.random() * 4),
-  }
-}) 
+function createDeck() {
+  return Array.from({length: 14}).map((_, i) => {
+    return {
+      value: Math.floor(Math.random() * 14) + 1,
+      suit: Math.floor(Math.random() * 4),
+    }
+  }).sort((a, b) => a.value - b.value)
+}
+let deck = createDeck();
 
 // const deck = [
 //   {
@@ -33,9 +36,18 @@ const deck = Array.from({length: 14}).map((_, i) => {
 
 let current = 0;
 
+function render() {
+  
+  console.clear();
+  const hand = renderHand(deck, selected);
+  // console.log(hand)
+  console.log(
+    // renderPicker(current, "_") + "\n" +
+    hand + "\n" + renderPicker(current));
+
+}
 // listen for the "keypress" event
 process.stdin.on('keypress', function (ch, key) {
-  console.clear();
   // console.log('got "keypress"', key);
   if (key && key.ctrl && key.name == 'c') {
     process.stdin.pause();
@@ -62,13 +74,11 @@ process.stdin.on('keypress', function (ch, key) {
     if (key.name == "right" || key.name === "l") {
       current = (current + 1) % deck.length;
     }
+     // deck = createDeck();
   }
-  
-  const hand = renderHand(deck, selected);
-  console.log(
-    // renderPicker(current, "_") + "\n" +
-    hand + "\n" + renderPicker(current));
+  render();
 });
  
 process.stdin.setRawMode(true);
 process.stdin.resume();
+render();
