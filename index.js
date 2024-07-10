@@ -35,26 +35,37 @@ let deck = createDeck();
 // ]
 
 let current = 0;
-let heat = [];
+let heat = calculateHeat(selected, deck);
 
 function calculateHeat(selected, deck) {
   const selectedCards = selected.map((c) => deck[c].value);
-  return deck.reduce((acc, c, i) => {
-    if (!selectedCards.includes(c.value)) {
-      return [...acc, i];
-    }
-    return acc
+  if (selectedCards.length === 0) {
+    return deck.map(() => true);
+  }
+  return deck.map((c) => {
+    return !(!selectedCards.includes(c.value) && c.value !== 14)
   }, [])
 }
 
 function render() {
-  
   const hand = renderHand(deck, selected, heat);
   console.clear();
   console.log(
     // renderPicker(current, "_") + "\n" +
     hand + "\n" + renderPicker(current));
 
+}
+function goLeft() {
+  const nextIndex = heat.findLastIndex((h,i) => i < current && h);
+  if (nextIndex !== -1) {
+    current = nextIndex;
+  }
+}
+function goRight() {
+  const nextIndex = heat.findIndex((h,i) => i > current && h);
+  if (nextIndex !== -1) {
+    current = nextIndex;
+  }
 }
 // listen for the "keypress" event
 process.stdin.on('keypress', function (ch, key) {
@@ -80,10 +91,10 @@ process.stdin.on('keypress', function (ch, key) {
       heat = calculateHeat(selected, deck);
     }
     if (key.name == "left"|| key.name === "h") {
-      current = (current - 1 + deck.length) % deck.length;
+      goLeft();
     }
     if (key.name == "right" || key.name === "l") {
-      current = (current + 1) % deck.length;
+      goRight();
     }
      // deck = createDeck();
   }

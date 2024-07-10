@@ -81,7 +81,7 @@ export function renderHand(deck, selected, heat) {
         emptyLine,
       ]
     } else {
-      if (heat.includes(i)) {
+      if (!heat[i]) {
         return [
           emptyLine,
           emptyLine,
