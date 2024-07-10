@@ -34,33 +34,65 @@ let deck = createDeck();
 //   },
 // ]
 
+const board = [
+  {
+    value: 5,
+    suit: 0
+  },
+  {
+    value: 5,
+    suit: 1
+  },
+]
 let current = 0;
-let heat = calculateHeat(selected, deck);
+let heat = calculateHeat(selected, deck, board);
 
-function calculateHeat(selected, deck) {
-  const selectedCards = selected.map((c) => deck[c].value);
-  if (selectedCards.length === 0) {
-    return deck.map(() => true);
+function getBoardValue(board) {
+  return board.find((c) => c.value !== 14)?.value || 14;
+}
+
+function calculateHeat(selected, deck, board) {
+  if (board.length > 0 && selected.length === board.length) {
+    return deck.map((_, i) => selected.includes(i));
   }
-  return deck.map((c) => {
-    return !(!selectedCards.includes(c.value) && c.value !== 14)
-  }, [])
+  const selectedCards = selected.map((c) => deck[c].value);
+  if (selectedCards.length !== 0) {
+    return deck.map((c) => {
+      return !(!selectedCards.includes(c.value) && c.value !== 14)
+    }, [])
+  }
+  const boardValue = getBoardValue(board);
+  
+  let res = deck;
+
+  if (board.length > 1) {
+    const jokerCount = deck.filter((c) => c.value === 14).length;
+    for (let i = 0; i < 13; i++) {
+      const count = deck.filter((c) => c.value === i).length;
+      if (count + jokerCount >= board.length) {
+        res = deck.map((c) => c.value === i);
+      }
+    }
+    const count = deck.filter((c) => c.value === 14).length;
+    if (count >= board.length) {
+      res = deck.map((c) => c.value === 14);
+    }
+  } else {
+    res = deck.map((c) => c.value > boardValue)
+  }
+
+  return res;
 }
 
 function render() {
   const hand = renderHand(deck, selected, heat);
+  if (heat[current] === false) {
+    goRight();
+  }
   console.clear();
   console.log(
     // renderPicker(current, "_") + "\n" +
-    renderBoard([{
-      value: 1,
-      suit: 0
-    },
-    {
-      value: 1,
-      suit: 1
-    },
-    ]) + "\n" +
+    renderBoard(board) + "\n" +
     hand + "\n" + renderPicker(current));
 
 }
@@ -97,7 +129,7 @@ process.stdin.on('keypress', function (ch, key) {
       } else {
         selected.push(current);
       }
-      heat = calculateHeat(selected, deck);
+      heat = calculateHeat(selected, deck, board);
     }
     if (key.name == "left"|| key.name === "h") {
       goLeft();

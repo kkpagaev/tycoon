@@ -3,8 +3,6 @@ import chalk from "chalk";
 const suits = ["♠", "♥", "♦", "♣"];
 
 const faces = [
-  "A",
-  "2",
   "3",
   "4",
   "5",
@@ -16,6 +14,8 @@ const faces = [
   "J",
   "Q",
   "K",
+  "A",
+  "2",
 ];
 
 function renderCard(value, suit) {
@@ -30,7 +30,7 @@ function renderCard(value, suit) {
       ["╰","─","─","─","─","─","─","─","╯"],
     ];
   }
-  if (value === 10) {
+  if (value === 8) {
     return [
       ["╭","─","─","─","─","─","─","─","╮"],
       ["│","1","0"," "," "," "," "," ","│"],
