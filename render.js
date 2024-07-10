@@ -56,10 +56,6 @@ function renderCard(value, suit) {
 }
 
 
-function pixelMatrixJoin(arr) {
-  console.log(arr[0].length)
-  console.log(arr.map((r)=> r.join("")).join("\n"))
-}
 const emptyLine = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
 function colored(card, color) {
@@ -114,6 +110,21 @@ export function renderHand(deck, selected, heat) {
   });
 
   return r.map((r)=> r.join("")).join("\n");
+}
+
+export function renderBoard(board) {
+  const cards = board.map((card) => {
+    return renderCard(card.value, card.suit).map((row) => row.join(""))
+  })
+  const rows = []
+
+  for (let i = 0; i < 7; i++) {
+    rows.push(
+      cards.map((card) => card[i])
+    );
+  }
+
+  return rows.map((row) => row.join("")).join("\n");
 }
 
 export function renderPicker(pos, ch) {

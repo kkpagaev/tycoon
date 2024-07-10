@@ -1,5 +1,5 @@
 import keypress from "keypress";
-import { renderHand, renderPicker } from "./render.js";
+import { renderBoard, renderHand, renderPicker } from "./render.js";
 
 keypress(process.stdin);
  
@@ -52,6 +52,15 @@ function render() {
   console.clear();
   console.log(
     // renderPicker(current, "_") + "\n" +
+    renderBoard([{
+      value: 1,
+      suit: 0
+    },
+    {
+      value: 1,
+      suit: 1
+    },
+    ]) + "\n" +
     hand + "\n" + renderPicker(current));
 
 }
